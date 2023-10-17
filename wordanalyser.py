@@ -88,11 +88,30 @@ def save_word_list(word_list: list[tuple[str, int]], file_name: str) -> None:
 
     Arguments:
         word_list: a list of words with their amounts
-        file_name: the name of the file to be written.
+        file_name: the name of the file to be written to.
     """
     with open(file_name, "w", encoding="utf8") as file:
         for word, amount in word_list:
             file.write(f"{word}: {amount}\n")
+
+
+def get_summary(word_list: list[tuple[str, int]], source: str, target: str) -> str:
+    """
+    Generates a summary of the word list.
+
+    Arguments:
+        word_list: a list of words with their amounts
+        source: input file
+        target: output file
+
+    Returns:
+        The summary
+    """
+    summary = f"{len(word_list)} words have been found in {source}.\n"
+    top_word, amount = word_list[0]
+    summary += f'The most popular word is "{top_word}" with {amount} occurrences.\n'
+    summary += f"The whole list has been written to the file {target}."
+    return summary
 
 
 def main():
@@ -100,8 +119,11 @@ def main():
     Generates the word list from the sample file (input.txt)
     and writes it to another file (input_analysis.txt)
     """
-    word_list = generate_word_list("input.txt")
-    save_word_list(word_list, "input_analysis.txt")
+    source = "input.txt"
+    target = "input_analysis.txt"
+    word_list = generate_word_list(source)
+    save_word_list(word_list, target)
+    print(get_summary(word_list, source, target))
 
 
 if __name__ == "__main__":
