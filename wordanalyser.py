@@ -9,8 +9,14 @@ def clean(txt: str) -> str:
     """
     Removes non-alphanumeric characters from a string and
     makes it lowercase.
+
+    Arguments:
+        txt: any string.
+
+    Returns:
+        A cleaned version of the string.
     """
-    return "".join(e for e in txt if e.isalnum()).lower()
+    return "".join(char for char in txt if char.isalnum()).lower()
 
 
 def generate_word_dict(file_name: str) -> dict[str, int]:
@@ -18,7 +24,7 @@ def generate_word_dict(file_name: str) -> dict[str, int]:
     Generates the word dictionary from a text file.
 
     Arguments:
-        file_name: name of the text file to be read
+        file_name: name of the text file to be read.
 
     Returns:
         Dictionary whose keys are all the cleaned words
@@ -43,11 +49,11 @@ def generate_word_list(file_name: str) -> list[tuple[str, int]]:
     Generates the word list from a text file.
 
     Arguments:
-        file_name: name of the text file to be read
+        file_name: name of the text file to be read.
 
     Returns:
         List of tuples (w,a) consisting of a word w and its amount a
-        in the text file, sorted decreasing by amount.
+        in the text file. These are sorted by decreasing amount.
     """
     word_dict = generate_word_dict(file_name)
     word_list = list(word_dict.items())
@@ -60,13 +66,21 @@ def save_word_list(word_list: list[tuple[str, int]], file_name: str) -> None:
     Saves the word list to a file.
 
     Arguments:
-        word_list: the previously generated word list
-        file_name: the name of the file to be written
+        word_list: a list of words with their amounts
+        file_name: the name of the file to be written.
     """
     with open(file_name, "w", encoding="utf8") as file:
         for word, amount in word_list:
             file.write(f"{word}: {amount}\n")
 
 
-words = generate_word_list("input.txt")
-save_word_list(words, "input_analysis.txt")
+def main():
+    """
+    Generates the word list from the sample file and writes it to another file.
+    """
+    words = generate_word_list("input.txt")
+    save_word_list(words, "input_analysis.txt")
+
+
+if __name__ == "__main__":
+    main()
