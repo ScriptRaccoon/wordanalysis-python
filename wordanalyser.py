@@ -19,6 +19,34 @@ def clean(txt: str) -> str:
     return "".join(char for char in txt if char.isalnum()).lower()
 
 
+def add_word(word: str, word_dict: dict[str, int]) -> None:
+    """
+    Adds a word to the dictionary. Changes the dictionary in place.
+
+    Arguments:
+        word: any string
+        word_dict: a dictionary which has the updated amount of the word
+    """
+    if len(word) == 0:
+        return
+    if not word in word_dict:
+        word_dict[word] = 0
+    word_dict[word] += 1
+
+
+def process_line(line: str, word_dict: dict[str, int]) -> None:
+    """
+    Adds all words inside of a line to a dictionary. Changes the dictionary in place.
+
+    Arguments:
+        word: any string
+        word_dict: a dictionary which has the updated amount of the words
+    """
+    words_in_line = map(clean, line.split(" "))
+    for word in words_in_line:
+        add_word(word, word_dict)
+
+
 def generate_word_dict(file_name: str) -> dict[str, int]:
     """
     Generates the word dictionary from a text file.
@@ -27,19 +55,13 @@ def generate_word_dict(file_name: str) -> dict[str, int]:
         file_name: name of the text file to be read.
 
     Returns:
-        Dictionary whose keys are all the cleaned words
-        and whose values are their amounts in the file.
+        A dictionary which stores the amount all words
     """
-    word_dict = {}
+    word_dict: dict[str, int] = {}
+
     with open(file_name, "r", encoding="utf8") as file:
         for line in file:
-            words_in_line = map(clean, line.split(" "))
-            for word in words_in_line:
-                if len(word) == 0:
-                    continue
-                if not word in word_dict:
-                    word_dict[word] = 0
-                word_dict[word] += 1
+            process_line(line, word_dict)
 
     return word_dict
 
@@ -57,8 +79,7 @@ def generate_word_list(file_name: str) -> list[tuple[str, int]]:
     """
     word_dict = generate_word_dict(file_name)
     word_list = list(word_dict.items())
-    word_list.sort(key=lambda t: t[1], reverse=True)
-    return word_list
+    return sorted(word_list, key=lambda t: t[1], reverse=True)
 
 
 def save_word_list(word_list: list[tuple[str, int]], file_name: str) -> None:
@@ -76,10 +97,11 @@ def save_word_list(word_list: list[tuple[str, int]], file_name: str) -> None:
 
 def main():
     """
-    Generates the word list from the sample file and writes it to another file.
+    Generates the word list from the sample file (input.txt)
+    and writes it to another file (input_analysis.txt)
     """
-    words = generate_word_list("input.txt")
-    save_word_list(words, "input_analysis.txt")
+    word_list = generate_word_list("input.txt")
+    save_word_list(word_list, "input_analysis.txt")
 
 
 if __name__ == "__main__":
