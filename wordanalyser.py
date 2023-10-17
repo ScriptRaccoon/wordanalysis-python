@@ -114,7 +114,7 @@ def get_summary(word_list: list[tuple[str, int]], source: str, target: str) -> s
     return summary
 
 
-def main():
+def main() -> None:
     """
     Generates the word list from the sample file (input.txt)
     and writes it to another file (input_analysis.txt)
