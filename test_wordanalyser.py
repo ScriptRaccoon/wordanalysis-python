@@ -5,8 +5,8 @@ Requires pytest and pytest-mock
 
 # pylint: disable=missing-function-docstring
 
-import wordanalyser
 from unittest.mock import patch, mock_open
+import wordanalyser
 
 
 def test_clean():
@@ -67,3 +67,13 @@ def test_generate_word_list(mocker):
     gen_dict_mock.return_value = {"word1": 60, "word2": 10, "word3": 30, "word4": 50}
     expected_list = [("word1", 60), ("word4", 50), ("word3", 30), ("word2", 10)]
     assert wordanalyser.generate_word_list("does-not-matter.txt") == expected_list
+
+
+def test_save_word_list():
+    open_mock = mock_open()
+    with patch("builtins.open", open_mock):
+        word_list = [("word1", 60), ("word4", 50), ("word3", 30), ("word2", 10)]
+        wordanalyser.save_word_list(word_list, "output.txt")
+    open_mock.assert_called_with("output.txt", "w", encoding="utf8")
+    output = "word1: 60\nword4: 50\nword3: 30\nword2: 10\n"
+    open_mock.return_value.write.assert_called_once_with(output)

@@ -109,8 +109,8 @@ def save_word_list(word_list: list[tuple[str, int]], file_name: str) -> None:
         file_name: the name of the file to be written to.
     """
     with open(file_name, "w", encoding="utf8") as file:
-        for word, amount in word_list:
-            file.write(f"{word}: {amount}\n")
+        output = "".join(f"{word}: {amount}\n" for word, amount in word_list)
+        file.write(output)
 
 
 def get_summary(word_list: list[tuple[str, int]], source: str, target: str) -> str:
