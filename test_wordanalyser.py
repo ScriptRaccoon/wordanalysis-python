@@ -1,5 +1,6 @@
 """
 Unit tests for wordanalyser.py
+Requires pytest and pytest-mock
 """
 
 # pylint: disable=missing-function-docstring
@@ -54,14 +55,15 @@ def test_get_common_words():
 def test_get_word_dict():
     mock_text = "This is a - sample - text.\nI hope this will work.\nok."
     common_words = ["i", "am", "ok", "a", "is", "will"]
-    expected_dict = {
-        "this": 2,
-        "sample": 1,
-        "text": 1,
-        "hope": 1,
-        "work": 1,
-    }
+    expected_dict = {"this": 2, "sample": 1, "text": 1, "hope": 1, "work": 1}
     with patch("builtins.open", mock_open(read_data=mock_text)):
         assert (
             wordanalyser.generate_word_dict("sample.txt", common_words) == expected_dict
         )
+
+
+def test_generate_word_list(mocker):
+    gen_dict_mock = mocker.patch("wordanalyser.generate_word_dict")
+    gen_dict_mock.return_value = {"word1": 60, "word2": 10, "word3": 30, "word4": 50}
+    expected_list = [("word1", 60), ("word4", 50), ("word3", 30), ("word2", 10)]
+    assert wordanalyser.generate_word_list("does-not-matter.txt") == expected_list
