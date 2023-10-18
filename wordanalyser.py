@@ -63,7 +63,7 @@ def process_line(line: str, word_dict: dict[str, int], common_words: list[str]) 
         add_word(word, word_dict, common_words)
 
 
-def generate_word_dict(file_name: str) -> dict[str, int]:
+def generate_word_dict(file_name: str, common_words: list[str]) -> dict[str, int]:
     """
     Generates the word dictionary from a text file.
     Too common words are filtered out.
@@ -74,7 +74,6 @@ def generate_word_dict(file_name: str) -> dict[str, int]:
     Returns:
         A dictionary which stores the amount all words
     """
-    common_words = get_common_words()
     word_dict: dict[str, int] = {}
 
     with open(file_name, "r", encoding="utf8") as file:
@@ -95,7 +94,8 @@ def generate_word_list(file_name: str) -> list[tuple[str, int]]:
         List of tuples (w,a) consisting of a word w and its amount a
         in the text file. These are sorted by decreasing amount.
     """
-    word_dict = generate_word_dict(file_name)
+    common_words = get_common_words()
+    word_dict = generate_word_dict(file_name, common_words)
     word_list = list(word_dict.items())
     return sorted(word_list, key=lambda t: t[1], reverse=True)
 

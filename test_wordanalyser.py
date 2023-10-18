@@ -5,6 +5,7 @@ Unit tests for wordanalyser.py
 # pylint: disable=missing-function-docstring
 
 import wordanalyser
+from unittest.mock import patch, mock_open
 
 
 def test_clean():
@@ -42,3 +43,25 @@ def test_add_summary():
         + "The whole list has been written to the file output.txt."
     )
     assert wordanalyser.get_summary(word_list, "input.txt", "output.txt") == summary
+
+
+def test_get_common_words():
+    mock_words = "i\nam\nOK"
+    with patch("builtins.open", mock_open(read_data=mock_words)):
+        assert wordanalyser.get_common_words() == ["i", "am", "ok"]
+
+
+def test_get_word_dict():
+    mock_text = "This is a - sample - text.\nI hope this will work.\nok."
+    common_words = ["i", "am", "ok", "a", "is", "will"]
+    expected_dict = {
+        "this": 2,
+        "sample": 1,
+        "text": 1,
+        "hope": 1,
+        "work": 1,
+    }
+    with patch("builtins.open", mock_open(read_data=mock_text)):
+        assert (
+            wordanalyser.generate_word_dict("sample.txt", common_words) == expected_dict
+        )
