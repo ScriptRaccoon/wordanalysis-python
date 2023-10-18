@@ -1,7 +1,9 @@
 """
-Module for analyzing the word counts inside of a text document.
-It counts how many times each word appears, sorts the
-results by decreasing amounts, and saves it to a file.
+Module for analyzing the word counts inside of a text document
+(could be a long novel, for example). It counts how many times
+each word appears, sorts the results by decreasing amounts,
+and saves it to a file. Too common words (the, of, to, and, ...)
+are filtered out to make the result more specific to the input file.
 """
 
 
@@ -19,10 +21,22 @@ def clean(txt: str) -> str:
     return "".join(char for char in txt if char.isalnum()).lower()
 
 
+def get_common_words() -> list[str]:
+    """
+    Gets the list of too common words from a specific file
+    """
+    common_words = []
+    with open("data/common_words.txt", "r", encoding="utf8") as file:
+        for line in file:
+            word = line.replace("\n", "").lower()
+            common_words.append(word)
+    return common_words
+
+
 def add_word(word: str, word_dict: dict[str, int], common_words: list[str]) -> None:
     """
     Adds a word to the dictionary. Changes the dictionary in place.
-    Does not add a word when it is in a list of most common words.
+    Ignores too common words.
 
     Arguments:
         word: any string
@@ -49,21 +63,10 @@ def process_line(line: str, word_dict: dict[str, int], common_words: list[str]) 
         add_word(word, word_dict, common_words)
 
 
-def get_common_words() -> list[str]:
-    """
-    Gets the list of too common words from a file
-    """
-    common_words = []
-    with open("common_words.txt", "r", encoding="utf8") as file:
-        for line in file:
-            word = line.replace("\n", "").lower()
-            common_words.append(word)
-    return common_words
-
-
 def generate_word_dict(file_name: str) -> dict[str, int]:
     """
     Generates the word dictionary from a text file.
+    Too common words are filtered out.
 
     Arguments:
         file_name: name of the text file to be read.
@@ -71,9 +74,8 @@ def generate_word_dict(file_name: str) -> dict[str, int]:
     Returns:
         A dictionary which stores the amount all words
     """
-    word_dict: dict[str, int] = {}
-
     common_words = get_common_words()
+    word_dict: dict[str, int] = {}
 
     with open(file_name, "r", encoding="utf8") as file:
         for line in file:
@@ -132,11 +134,10 @@ def get_summary(word_list: list[tuple[str, int]], source: str, target: str) -> s
 
 def main() -> None:
     """
-    Generates the word list from the sample file (input.txt)
-    and writes it to another file (input_analysis.txt)
+    Generates the word list from the sample file and writes it to another file
     """
-    source = "input.txt"
-    target = "input_analysis.txt"
+    source = "data/input.txt"
+    target = "data/output.txt"
     word_list = generate_word_list(source)
     save_word_list(word_list, target)
     print(get_summary(word_list, source, target))
