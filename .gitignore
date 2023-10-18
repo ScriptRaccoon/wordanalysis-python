@@ -1,3 +1,4 @@
 *.txt
+!common_words.txt
 .coverage
 __pycache__

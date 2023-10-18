@@ -19,24 +19,26 @@ def clean(txt: str) -> str:
     return "".join(char for char in txt if char.isalnum()).lower()
 
 
-def add_word(word: str, word_dict: dict[str, int]) -> None:
+def add_word(word: str, word_dict: dict[str, int], common_words: list[str]) -> None:
     """
     Adds a word to the dictionary. Changes the dictionary in place.
+    Does not add a word when it is in a list of most common words.
 
     Arguments:
         word: any string
         word_dict: a dictionary which has the updated amount of the word
     """
-    if len(word) == 0:
+    if len(word) == 0 or word in common_words:
         return
     if not word in word_dict:
         word_dict[word] = 0
     word_dict[word] += 1
 
 
-def process_line(line: str, word_dict: dict[str, int]) -> None:
+def process_line(line: str, word_dict: dict[str, int], common_words: list[str]) -> None:
     """
-    Adds all words inside of a line to a dictionary. Changes the dictionary in place.
+    Adds all non-common words inside of a line to a dictionary.
+    Changes the dictionary in place.
 
     Arguments:
         word: any string
@@ -44,7 +46,19 @@ def process_line(line: str, word_dict: dict[str, int]) -> None:
     """
     words_in_line = map(clean, line.split(" "))
     for word in words_in_line:
-        add_word(word, word_dict)
+        add_word(word, word_dict, common_words)
+
+
+def get_common_words() -> list[str]:
+    """
+    Gets the list of too common words from a file
+    """
+    common_words = []
+    with open("common_words.txt", "r", encoding="utf8") as file:
+        for line in file:
+            word = line.replace("\n", "").lower()
+            common_words.append(word)
+    return common_words
 
 
 def generate_word_dict(file_name: str) -> dict[str, int]:
@@ -59,9 +73,11 @@ def generate_word_dict(file_name: str) -> dict[str, int]:
     """
     word_dict: dict[str, int] = {}
 
+    common_words = get_common_words()
+
     with open(file_name, "r", encoding="utf8") as file:
         for line in file:
-            process_line(line, word_dict)
+            process_line(line, word_dict, common_words)
 
     return word_dict
 
@@ -107,7 +123,7 @@ def get_summary(word_list: list[tuple[str, int]], source: str, target: str) -> s
     Returns:
         The summary
     """
-    summary = f"{len(word_list)} words have been found in {source}.\n"
+    summary = f"{len(word_list)} non-common words have been found in {source}.\n"
     top_word, amount = word_list[0]
     summary += f'The most popular word is "{top_word}" with {amount} occurrences.\n'
     summary += f"The whole list has been written to the file {target}."
