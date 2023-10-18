@@ -63,6 +63,8 @@ def test_get_word_dict():
 
 
 def test_generate_word_list(mocker):
+    gen_common_mock = mocker.patch("wordanalyser.get_common_words")
+    gen_common_mock.return_value = []
     gen_dict_mock = mocker.patch("wordanalyser.generate_word_dict")
     gen_dict_mock.return_value = {"word1": 60, "word2": 10, "word3": 30, "word4": 50}
     expected_list = [("word1", 60), ("word4", 50), ("word3", 30), ("word2", 10)]
