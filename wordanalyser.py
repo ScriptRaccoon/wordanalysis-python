@@ -26,7 +26,7 @@ def get_common_words() -> list[str]:
     Gets the list of too common words from a specific file
     """
     common_words = []
-    with open("data/common_words.txt", "r", encoding="utf8") as file:
+    with open("common_words.txt", "r", encoding="utf8") as file:
         for line in file:
             word = line.replace("\n", "").lower()
             common_words.append(word)
